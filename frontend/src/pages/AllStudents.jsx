@@ -152,11 +152,9 @@ const AllStudents = () => {
     <>
       <Navbar />
       <div style={{ display: "flex", gap: "50px", padding: "20px" }}>
-        {/* Student List with Filters */}
         <div style={{ flex: 1 }}>
           <h2>📚 All Students</h2>
 
-          {/* Filters */}
           <div style={{ marginBottom: "10px", display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <input type="text" placeholder="Search by name" value={searchName} onChange={e => setSearchName(e.target.value)} style={inputStyle} />
             <select value={filterDept} onChange={e => setFilterDept(e.target.value)} style={inputStyle}>

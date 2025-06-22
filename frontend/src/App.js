@@ -13,10 +13,10 @@ import PrincipalDashboard from './pages/PrincipalDashboard';
 import AllStudents from './pages/AllStudents';
 import AllFaculty from './pages/AllFaculty';
 import AllHOD from './pages/AllHOD';
-
+import AllPrincipal from './pages/AllPrincipal';
 
 import Forbidden from './pages/Forbidden';
-import AllPrincipal from './pages/AllPrincipal';
+import AssignSubject from './pages/AssignSubject'; // ✅ Added import
 
 function App() {
   return (
@@ -98,6 +98,16 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['principal']}>
               <PrincipalDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ HOD Assign Subject Page */}
+        <Route
+          path="/hod/assign-subject"
+          element={
+            <ProtectedRoute allowedRoles={['hod']}>
+              <AssignSubject />
             </ProtectedRoute>
           }
         />

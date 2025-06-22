@@ -21,10 +21,17 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message);
-
+    
       localStorage.setItem('token', data.token);
       localStorage.setItem('roles', JSON.stringify(data.roles));
       localStorage.setItem('name', JSON.stringify(data.user.name));
+      localStorage.setItem('name', JSON.stringify(data.user.name));
+      localStorage.setItem('department', JSON.stringify(data.user.department_id));
+      console.log(data.user);
+      
+
+
+
 
 
 
@@ -36,7 +43,6 @@ const Login = () => {
       else if (roles.includes('principal')) navigate('/principal/dashboard');
       else if (roles.includes('student')) navigate('/student/dashboard');
       else throw new Error('No valid role found');
-
     } catch (err) {
       setError(err.message);
     }
@@ -53,6 +59,14 @@ const Login = () => {
         <button type="submit">Login</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h5>TestFaculty@gmail.com - password -123</h5>
+      <h5>TestAdmin@gmail.com - password -123456</h5>
+      <h5>Testhod@gmail.com - password -123</h5>
+      <h5>TestStu@gmail.com - password -123</h5>
+      <h5>TestPrincipal@gmail.com - password -123</h5>
+
+
+
     </div>
   );
 };

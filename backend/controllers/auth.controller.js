@@ -172,10 +172,12 @@ exports.login = (req, res) => {
                 token,
                 roles,
                 user: {
+                  department_id : user.department_id,
                   id: user.id,
                   name: user.name,
                   email: user.email
                 }
+      
               });
             });
           });

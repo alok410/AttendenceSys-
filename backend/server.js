@@ -9,6 +9,8 @@ const principalRoutes = require("./routes/principal.route");
 const classesRoutes =  require("./routes/classes.route");
 const adminRoutes=  require("./routes/admin.route");
 const departmentsRoutes = require("./routes/departments.route")
+const subjectssRoutes = require("./routes/subject.route")
+
  
 require('dotenv').config();
 
@@ -30,6 +32,8 @@ app.use('/principal',principalRoutes)
 app.use('/admin',adminRoutes)
 app.use('/classes',classesRoutes)
 app.use('/departments',departmentsRoutes)
+app.use('/subjects',subjectssRoutes)
+
 
 
 

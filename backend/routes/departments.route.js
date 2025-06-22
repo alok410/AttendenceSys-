@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getAllDepartments} = require('../controllers/department.controller');
+const { getAllDepartments, getDepartmentById} = require('../controllers/department.controller');
 
 router.get('/getAllDepartments',getAllDepartments);
+router.get('/getById/:id',getDepartmentById);
+
 
 module.exports = router;
