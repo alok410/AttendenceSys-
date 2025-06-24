@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+
 
 const AllLectures = () => {
   const { id: subjectId } = useParams();
   const [lectures, setLectures] = useState([]);
   const [subjectName, setSubjectName] = useState('');
+  const navigate = useNavigate();
+  
   const [filter, setFilter] = useState({
     date: '',
     type: '',
@@ -101,7 +104,8 @@ const AllLectures = () => {
                   <td style={tdStyle}>{lec.topic || '-'}</td>
                   <td style={tdStyle}>{lec.faculty_name}</td>
                   <td style={tdStyle}>
-                    <button style={btnStyle}>Mark</button>
+          
+                    <button onClick={() => navigate('/faculty/my-subjects/:id/atd')} style={btnStyle}>Mark</button>
                   </td>
                 </tr>
               ))}
