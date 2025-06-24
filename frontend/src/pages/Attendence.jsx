@@ -10,4 +10,4 @@ const Attendance = (req,res) =>{
 }
 
 
-export default Attendance
+export default Attendance           

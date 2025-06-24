@@ -127,6 +127,34 @@ const getLecturesBySubject = (req, res) => {
   });
 };
 
+
+
+
+
+const createLecture = (req, res) => {
+  const { subject_id, faculty_id, topic, date, duration } = req.body;
+
+  if (!subject_id || !faculty_id || !topic || !date || !duration) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  const query = `
+    INSERT INTO lectures (subject_id, faculty_id, topic, date, duration)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(query, [subject_id, faculty_id, topic, date, duration], (err, result) => {
+    if (err) {
+      console.error('❌ Error inserting lecture:', err);
+      return res.status(500).json({ message: 'Server error while creating lecture.' });
+    }
+
+    res.status(201).json({ message: 'Lecture created successfully', lectureId: result.insertId });
+  });
+};
+
+
+
 module.exports = {
   getAllLecture,getLectureSummary,getLecturesBySubject,
-  getLectureSummaryByFaculty,getLectureCountsByFaculty};
+  getLectureSummaryByFaculty,getLectureCountsByFaculty,createLecture};
