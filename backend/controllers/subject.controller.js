@@ -122,3 +122,26 @@ exports.getSubjectsByFaculty = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+exports.createSubject = (req, res) => {
+  const { name, class_id } = req.body;
+
+  if (!name || !class_id) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const query = `
+    INSERT INTO subjects (name, class_id)
+    VALUES (?, ?)
+  `;
+
+  connection.query(query, [name, class_id], (err, result) => {
+    if (err) {
+      console.error("❌ SQL Error:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.status(201).json({ message: "Subject created successfully" });
+  });
+};
+

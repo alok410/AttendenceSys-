@@ -101,6 +101,32 @@ const getLectureCountsByFaculty = (req, res) => {
   });
 };
 
+const getLecturesBySubject = (req, res) => {
+  const { subjectId } = req.params;
+
+  const query = `
+    SELECT 
+      l.id,
+      l.topic,
+      l.date,
+      l.duration,
+      l.faculty_id,
+      s.name AS subject_name,
+      f.name AS faculty_name
+    FROM lectures l
+    JOIN subjects s ON l.subject_id = s.id
+    JOIN faculty f ON l.faculty_id = f.id
+    WHERE l.subject_id = ?
+    ORDER BY l.date DESC
+  `;
+
+  db.query(query, [subjectId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    res.status(200).json(results);
+  });
+};
+
 module.exports = {
-  getAllLecture,getLectureSummary,
+  getAllLecture,getLectureSummary,getLecturesBySubject,
   getLectureSummaryByFaculty,getLectureCountsByFaculty};

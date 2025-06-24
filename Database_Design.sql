@@ -250,7 +250,10 @@ INSERT INTO lectures (subject_id, faculty_id, date, duration) VALUES
 (3, 1, '2025-06-14', 2);
 -- Subject 4 to 35
 -- Format: (subject_id, faculty_id, date, duration)
-
+INSERT INTO lectures (subject_id, faculty_id, date, duration) VALUES
+(14, 20, '2025-06-01', 1),
+(14, 20, '2025-06-04', 1),
+(14, 20, '2025-06-07', 2),
 -- Subject 4 – Computer Networks
 INSERT INTO lectures (subject_id, faculty_id, date, duration) VALUES
 (4, 2, '2025-06-01', 1), (4, 2, '2025-06-04', 1), (4, 2, '2025-06-06', 1),

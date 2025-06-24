@@ -4,7 +4,8 @@ const {
   getSubjectsByClass,
   assignFacultyToSubject,
   getSubjectsByDepartmentFull, // ✅ newly added
-  getSubjectsByFaculty
+  getSubjectsByFaculty,
+  createSubject
 } = require('../controllers/subject.controller');
 
 const { getFacultyByDepartment } = require('../controllers/faculty.controller');
@@ -13,6 +14,7 @@ const { getFacultyByDepartment } = require('../controllers/faculty.controller');
 router.get('/byClass/:classId', getSubjectsByClass);
 router.get('/facultyByDept/:deptId', getFacultyByDepartment);
 router.post('/assignFaculty/:subjectId', assignFacultyToSubject);
+router.post('/createSubject', createSubject);
 
 // ✅ New route to get full subject info (for HOD view)
 router.get('/byDeptFull/:deptId', getSubjectsByDepartmentFull);

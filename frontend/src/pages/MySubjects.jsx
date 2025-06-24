@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom'; 
 
 const MySubjects = () => {
   const facultyId = JSON.parse(localStorage.getItem('id'));
   const [subjects, setSubjects] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [lectureCounts, setLectureCounts] = useState([]);
-
+  const navigate = useNavigate(); 
   const [filter, setFilter] = useState({
     subject: '',
     className: '',
     batch: ''
   });
+
+
+    const handleOpenClick = (subject) => {
+    // Navigate to lecture page and pass subject via state or query
+    navigate(`/faculty/my-subjects/${subject.id}`, { state: subject });
+  };
 
   useEffect(() => {
     if (!facultyId) return;
@@ -144,7 +151,7 @@ const MySubjects = () => {
                     <td style={cellStyle}>{getCounts(sub.id).lec}</td>
                     <td style={cellStyle}>{getCounts(sub.id).lab}</td>
                     <td style={cellStyle}>
-                      <button style={openBtnStyle}>🔓 Open</button>
+                      <button style={openBtnStyle} onClick={() => handleOpenClick(sub)}>Open</button>
                     </td>
                   </tr>
                 ))}

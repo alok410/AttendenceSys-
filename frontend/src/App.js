@@ -20,6 +20,8 @@ import AllClasses from './pages/AllClasses';
 import Forbidden from './pages/Forbidden';
 import AssignSubject from './pages/AssignSubject';
 import MySubjects from './pages/MySubjects';
+import AllLectures from './pages/AllLectures';
+import CreateSubjects from './pages/CreateSubject';
 
 
 function App() {
@@ -46,7 +48,10 @@ function App() {
 
         {/* Extra Pages */}
         <Route path="/hod/assign-subject" element={<ProtectedRoute allowedRoles={['hod']}><AssignSubject /></ProtectedRoute>} />
+        <Route path="/hod/create-subject" element={<ProtectedRoute allowedRoles={['hod']}><CreateSubjects /></ProtectedRoute>} />
         <Route path="/faculty/my-subjects" element={<ProtectedRoute allowedRoles={['faculty']}><MySubjects /></ProtectedRoute>} />
+        <Route path="/faculty/my-subjects/:id" element={<ProtectedRoute allowedRoles={['faculty']}><AllLectures /></ProtectedRoute>} />
+      
       </Routes>
     </Router>
   );

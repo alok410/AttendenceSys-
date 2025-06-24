@@ -11,7 +11,11 @@ const HODDashboard = () => {
       <h2>HOD Dashboard</h2>
 
       <button style={btn} onClick={() => navigate('/hod/assign-subject')}>
-        Assign Subject to Faculty
+        <h3>Assign Subject to Faculty</h3>
+      </button>
+      
+      <button style={btn} onClick={() => navigate('/hod/create-subject')}>
+        <h3>Create Subject</h3> 
       </button>
     </>
   );
