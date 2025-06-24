@@ -50,12 +50,24 @@ exports.createFaculty = async (req, res) => {
 
 
 // Update Faculty
-exports.updateFaculty = (req, res) => {
+exports.updateFaculty = async (req, res) => {
   const { id } = req.params;
-  const { name, email, department_id } = req.body;
-  const query = `UPDATE faculty SET name = ?, email = ?, department_id = ? WHERE id = ?`;
+  const { name, email, department_id, password } = req.body;
 
-  db.query(query, [name, email, department_id, id], (err) => {
+  // Decide query depending on whether password is provided
+  let query;
+  let values;
+
+  if (password && password.trim() !== "") {
+    const hashedPassword = await bcrypt.hash(password, 10); // only if you're hashing
+    query = `UPDATE faculty SET name = ?, email = ?, department_id = ?, password = ? WHERE id = ?`;
+    values = [name, email, department_id, hashedPassword, id];
+  } else {
+    query = `UPDATE faculty SET name = ?, email = ?, department_id = ? WHERE id = ?`;
+    values = [name, email, department_id, id];
+  }
+
+  db.query(query, values, (err) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(200).json({ message: "Faculty updated successfully" });
   });

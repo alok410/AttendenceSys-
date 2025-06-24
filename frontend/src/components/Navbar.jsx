@@ -3,31 +3,46 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-  const name = JSON.parse(localStorage.getItem('name') || '""');
-  const departmentId = JSON.parse(localStorage.getItem('department') || '""');
 
-  const [departmentName, setDepartmentName] = useState('');
+  const safeParse = (key, fallback) => {
+    try {
+      const value = localStorage.getItem(key);
+      if (value === null || value === 'undefined') return fallback;
+      return JSON.parse(value);
+    } catch (e) {
+      return fallback;
+    }
+  };
 
-  // Fetch department name by ID
+  const user = safeParse('user', {});
+  const roles = safeParse('roles', []);
+  const name = safeParse('name', '');
+  const departmentId = safeParse('department', null);
+
+  const [departmentName, setDepartmentName] = useState('Loading...');
+
   useEffect(() => {
     const fetchDepartmentName = async () => {
+      if (!departmentId) {
+        setDepartmentName('No Department');
+        return;
+      }
+
       try {
         const res = await fetch(`http://localhost:5000/departments/getById/${departmentId}`);
         const data = await res.json();
-        if (data && data.name) {
+        if (data?.name) {
           setDepartmentName(data.name);
         } else {
-          setDepartmentName('Unknown');
+          setDepartmentName('No Department');
         }
       } catch (error) {
         console.error('Error fetching department:', error);
-        setDepartmentName('Unknown');
+        setDepartmentName('No Department');
       }
     };
 
-    if (departmentId) fetchDepartmentName();
+    fetchDepartmentName();
   }, [departmentId]);
 
   const handleLogout = () => {
@@ -36,8 +51,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ background: '#333', color: '#fff', padding: '1rem', display: 'flex', alignItems: 'center' }}>
-      <span style={{ marginRight: '1rem' }}>
+    <nav style={{ background: '#333', color: '#fff', padding: '1rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+      <span style={{ marginRight: '1rem', fontWeight: 'bold' }}>
         👋 Hello, {name || 'User'} - {departmentName}
       </span>
 
@@ -47,7 +62,9 @@ const Navbar = () => {
       {roles.includes('faculty') && <button onClick={() => navigate('/faculty/dashboard')}>Faculty Panel</button>}
       {roles.includes('student') && <button onClick={() => navigate('/student/dashboard')}>Student Panel</button>}
 
-      <button onClick={handleLogout} style={{ marginLeft: 'auto' }}>Logout</button>
+      <button onClick={handleLogout} style={{ marginLeft: 'auto', background: '#e74c3c', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer' }}>
+        Logout
+      </button>
     </nav>
   );
 };

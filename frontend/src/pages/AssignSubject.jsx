@@ -2,8 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 
 const AssignSubject = () => {
-  const departmentId = JSON.parse(localStorage.getItem('department') || 'null');
+  const getParsed = (key, fallback) => {
+    try {
+      const value = localStorage.getItem(key);
+      if (!value || value === 'undefined' || value === 'null') return fallback;
+      return JSON.parse(value);
+    } catch {
+      return fallback;
+    }
+  };
 
+  const departmentId = getParsed('department', null);
   const [subjects, setSubjects] = useState([]);
   const [facultyList, setFacultyList] = useState([]);
   const [classList, setClassList] = useState([]);
@@ -43,7 +52,7 @@ const AssignSubject = () => {
     const subjectMatch = filter.subject ? sub.name === filter.subject : true;
     const classMatch = filter.className ? sub.class_name === filter.className : true;
     const facultyMatch = filter.faculty
-      ? [sub.fac_1?.id, sub.fac_2?.id, sub.fac_3?.id, sub.fac_4?.id].includes(filter.faculty)
+      ? [sub.fac_1?.id, sub.fac_2?.id, sub.fac_3?.id, sub.fac_4?.id].includes(parseInt(filter.faculty))
       : true;
     const batchMatch = filter.batch ? sub.batch === filter.batch : true;
 
@@ -87,7 +96,6 @@ const AssignSubject = () => {
       <div style={containerStyle}>
         <h2 style={headingStyle}>🎓 Assign Faculty to Subjects</h2>
 
-        {/* Filters */}
         <div style={filterWrapperStyle}>
           <select value={filter.subject} onChange={e => setFilter({ ...filter, subject: e.target.value })} style={selectStyle}>
             <option value="">Filter by Subject</option>
@@ -118,7 +126,6 @@ const AssignSubject = () => {
           </select>
         </div>
 
-        {/* Table */}
         <div style={scrollableTableWrapper}>
           <table style={tableStyle}>
             <thead style={theadStyle}>

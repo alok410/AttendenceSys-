@@ -21,7 +21,7 @@ const getAllStudents = (req, res) => {
     JOIN 
       classes ON students.class_id = classes.id
     order by id desc;
-  `;
+  `
 
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });

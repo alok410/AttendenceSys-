@@ -20,6 +20,7 @@ const AdminDashboard = () => {
         <button onClick={() => navigate('/admin/faculty')} style={btn}>Faculty</button>
         <button onClick={() => navigate('/admin/hod')} style={btn}>HOD</button>
         <button onClick={() => navigate('/admin/principal')} style={btn}>Principal</button>
+        <button onClick={() => navigate('/admin/classes')} style={btn}>Classes</button>
         <button onClick={handleLogout} style={{ ...btn, backgroundColor: 'red' }}>Logout</button>
       </div>
     </>

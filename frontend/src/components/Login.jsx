@@ -25,7 +25,7 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('roles', JSON.stringify(data.roles));
       localStorage.setItem('name', JSON.stringify(data.user.name));
-      localStorage.setItem('name', JSON.stringify(data.user.name));
+      localStorage.setItem('id', JSON.stringify(data.user.id));
       localStorage.setItem('department', JSON.stringify(data.user.department_id));
       console.log(data.user);
       
@@ -64,6 +64,8 @@ const Login = () => {
       <h5>Testhod@gmail.com - password -123</h5>
       <h5>TestStu@gmail.com - password -123</h5>
       <h5>TestPrincipal@gmail.com - password -123</h5>
+      <h5>hodMech@gmail.com - password -1 </h5>
+
 
 
 

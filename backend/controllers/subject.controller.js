@@ -98,3 +98,27 @@ exports.getSubjectsByDepartmentFull = (req, res) => {
   });
 };
 
+
+// ------------------------------------------
+// Get Subjects Assigned to a Particular Faculty
+// ------------------------------------------
+exports.getSubjectsByFaculty = (req, res) => {
+  const { facultyId } = req.params;
+
+  const query = `
+    SELECT 
+      s.id,
+      s.name,
+      c.name AS class_name,
+      c.batch
+    FROM subjects s
+    JOIN classes c ON s.class_id = c.id
+    WHERE s.fac_1 = ? OR s.fac_2 = ? OR s.fac_3 = ? OR s.fac_4 = ?
+  `;
+
+  connection.query(query, [facultyId, facultyId, facultyId, facultyId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    res.status(200).json(results);
+  });
+};
