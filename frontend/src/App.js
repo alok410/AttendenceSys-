@@ -23,6 +23,7 @@ import MySubjects from './pages/MySubjects';
 import AllLectures from './pages/AllLectures';
 import CreateSubjects from './pages/CreateSubject';
 import Attendance from './pages/Attendence';
+import Report from './pages/Report';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
         <Route path="/faculty/my-subjects" element={<ProtectedRoute allowedRoles={['faculty']}><MySubjects /></ProtectedRoute>} />
         <Route path="/faculty/my-subjects/:id" element={<ProtectedRoute allowedRoles={['faculty']}><AllLectures /></ProtectedRoute>} />
         <Route path="/faculty/my-subjects/:subjectId/:lectureId" element={<ProtectedRoute allowedRoles={['faculty']}><Attendance /></ProtectedRoute>} />
+        <Route path="/faculty/my-subjects/report/:subjectId/:facultyId" element={<ProtectedRoute allowedRoles={['faculty']}><Report /></ProtectedRoute>} />
         
 
       

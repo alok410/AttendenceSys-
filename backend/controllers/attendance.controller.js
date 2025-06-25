@@ -1,7 +1,5 @@
 const db = require('../config/db'); 
 
-
-
 const markOrUpdateAttendance = (req, res) => {
   const { attendance } = req.body;
 
@@ -22,7 +20,6 @@ const markOrUpdateAttendance = (req, res) => {
         if (err) return reject(err);
 
         if (result.length > 0) {
-          // Record exists -> update
           const updateQuery = `
             UPDATE attendance SET status = ? 
             WHERE student_id = ? AND lecture_id = ?
@@ -32,7 +29,6 @@ const markOrUpdateAttendance = (req, res) => {
             resolve('updated');
           });
         } else {
-          // Insert new record
           const insertQuery = `
             INSERT INTO attendance (student_id, lecture_id, status)
             VALUES (?, ?, ?)
@@ -74,10 +70,96 @@ const getAttendanceByLecture = (req, res) => {
     res.status(200).json(attendanceMap);
   });
 };
+const getAttendanceReport = (req, res) => {
+  const { subjectId, facultyId } = req.params;
 
+  if (!facultyId) {
+    return res.status(400).json({ message: 'facultyId is required in route params' });
+  }
+
+  const getSubjectQuery = `
+    SELECT s.id AS subject_id, s.class_id, c.name AS class_name
+    FROM subjects s
+    JOIN classes c ON s.class_id = c.id
+    WHERE s.id = ?
+  `;
+
+  db.query(getSubjectQuery, [subjectId], (err, subjectResults) => {
+    if (err || subjectResults.length === 0) {
+      return res.status(500).json({ message: 'Subject not found' });
+    }
+
+    const { class_id } = subjectResults[0];
+
+    const getLecturesQuery = `
+      SELECT 
+        l.id,
+        l.topic,
+        DATE_FORMAT(l.date, '%Y-%m-%d') AS date,
+        l.duration,
+        l.faculty_id,
+        s.name AS subject_name,
+        f.name AS faculty_name
+      FROM lectures l
+      JOIN subjects s ON l.subject_id = s.id
+      JOIN faculty f ON l.faculty_id = f.id
+      WHERE l.subject_id = ? AND l.faculty_id = ?
+      ORDER BY l.date, l.id
+    `;
+
+    db.query(getLecturesQuery, [subjectId, facultyId], (err2, lectures) => {
+      if (err2) return res.status(500).json({ message: 'Error fetching lectures' });
+
+      const lectureIds = lectures.map(l => l.id);
+      const lectureMeta = lectures.map(l => ({ id: l.id, date: l.date , duration:l.duration}));
+
+      const getStudentsQuery = `SELECT id, name, erno FROM students WHERE class_id = ?`;
+
+      db.query(getStudentsQuery, [class_id], (err3, students) => {
+        if (err3) return res.status(500).json({ message: 'Error fetching students' });
+
+        const getAttendanceQuery = `
+          SELECT student_id, lecture_id, status FROM attendance
+          WHERE lecture_id IN (?)
+        `;
+
+        db.query(getAttendanceQuery, [lectureIds], (err4, attendanceRows) => {
+          if (err4) return res.status(500).json({ message: 'Error fetching attendance' });
+
+          const attendanceMap = {};
+          attendanceRows.forEach(row => {
+            const key = `${row.student_id}_${row.lecture_id}`;
+            attendanceMap[key] = row.status;
+          });
+
+          const studentReport = students.map(student => {
+            const attendance = {};
+            lectureMeta.forEach(lec => {
+              const key = `${student.id}_${lec.id}`;
+              attendance[lec.id] = attendanceMap[key] || 'Absent';
+            });
+
+            return {
+              id: student.id,
+              name: student.name,
+              erno: student.erno,
+              attendance
+            };
+          });
+
+          res.json({
+            lectureDates: lectureMeta, // now includes lectureId
+            students: studentReport
+          });
+        });
+      });
+    });
+  });
+};
 
 
 module.exports = {
   markOrUpdateAttendance,
-  getAttendanceByLecture
+  getAttendanceByLecture,
+  getAttendanceReport
 };

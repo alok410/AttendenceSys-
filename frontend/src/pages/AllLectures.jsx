@@ -6,26 +6,38 @@ const AllLectures = () => {
   const { id: subjectId } = useParams();
   const [lectures, setLectures] = useState([]);
   const [subjectName, setSubjectName] = useState('');
+  const [className, setClassName] = useState('');
+  const [classId, setClassId] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [newLecture, setNewLecture] = useState({ date: '', type: 'Lec', topic: '' });
   const facultyId = JSON.parse(localStorage.getItem('id'));
   const navigate = useNavigate();
-
   const [filter, setFilter] = useState({ date: '', type: '', topic: '', faculty: '' });
 
   useEffect(() => {
+    // Fetch lectures
     fetch(`http://localhost:5000/lectures/bySubject/${subjectId}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
           setLectures(data);
-          if (data.length > 0) setSubjectName(data[0].subject_name || '');
         }
       })
       .catch(err => {
         console.error('Error fetching lectures:', err);
         setLectures([]);
       });
+
+    // Fetch subject details
+    fetch(`http://localhost:5000/subjects/details/${subjectId}`)
+      .then(res => res.json())
+      .then(data => {
+        setSubjectName(data.subject_name || '');
+        setClassName(data.class_name || '');
+        setClassId(data.id || '');
+        
+      })
+      .catch(err => console.error('Error fetching subject details:', err));
   }, [subjectId]);
 
   const filteredLectures = lectures.filter(lec =>
@@ -36,30 +48,34 @@ const AllLectures = () => {
   );
 
   const handleCreateLecture = () => {
-    const payload = {
-      subject_id: subjectId,
-      faculty_id: facultyId,
-      topic: newLecture.topic,
-      date: newLecture.date,
-      duration: newLecture.type === 'Lec' ? 1 : 2
-    };
+  // Ensure date is sent in 'YYYY-MM-DD' format without time manipulation
+  const formattedDate = new Date(newLecture.date).toISOString().split('T')[0];
 
-    fetch('http://localhost:5000/lectures/createLecture', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(() => {
-        alert('Lecture created!');
-        setShowModal(false);
-        setNewLecture({ date: '', type: 'Lec', topic: '' });
-        fetch(`http://localhost:5000/lectures/bySubject/${subjectId}`)
-          .then(res => res.json())
-          .then(setLectures);
-      })
-      .catch(() => alert('Failed to create lecture'));
+  const payload = {
+    subject_id: subjectId,
+    faculty_id: facultyId,
+    topic: newLecture.topic,
+    date: formattedDate,
+    duration: newLecture.type === 'Lec' ? 1 : 2
   };
+
+  fetch('http://localhost:5000/lectures/createLecture', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(res => res.json())
+    .then(() => {
+      alert('Lecture created!');
+      setShowModal(false);
+      setNewLecture({ date: '', type: 'Lec', topic: '' });
+      fetch(`http://localhost:5000/lectures/bySubject/${subjectId}`)
+        .then(res => res.json())
+        .then(setLectures);
+    })
+    .catch(() => alert('Failed to create lecture'));
+};
+
 
   return (
     <>
@@ -82,8 +98,14 @@ const AllLectures = () => {
         </div>
 
         <button style={createBtnStyle} onClick={() => setShowModal(true)}>+ Create Lecture</button>
-        <button style={createBtnStyle} onClick={() => setShowModal(true)}>Export Report</button>
-
+        <button
+          onClick={() => navigate(`/faculty/my-subjects/report/${subjectId}/${facultyId}`, {
+  state: { subjectName, className, classId }
+})}
+          style={{ ...btnStyle, backgroundColor: '#17a2b8', marginLeft: '10px' }}
+        >
+          Export Report
+        </button>
 
         {filteredLectures.length === 0 ? (
           <p>No lectures found.</p>
@@ -109,22 +131,22 @@ const AllLectures = () => {
                     <td style={tdStyle}>{lec.topic || '-'}</td>
                     <td style={tdStyle}>{lec.faculty_name}</td>
                     <td style={tdStyle}>
-  {lec.faculty_id === facultyId ? (
-    <button
-      onClick={() => navigate(`/faculty/my-subjects/${subjectId}/${lec.id}`)}
-      style={btnStyle}
-    >
-      Mark
-    </button>
-  ) : (
-    <button
-      disabled
-      style={{ ...btnStyle, backgroundColor: 'gray', cursor: 'not-allowed' }}
-    >
-      Not Allowed
-    </button>
-  )}
-</td>
+                      {lec.faculty_id === facultyId ? (
+                        <button
+                          onClick={() => navigate(`/faculty/my-subjects/${subjectId}/${lec.id}`)}
+                          style={btnStyle}
+                        >
+                          Mark
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          style={{ ...btnStyle, backgroundColor: 'gray', cursor: 'not-allowed' }}
+                        >
+                          Not Allowed
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -139,11 +161,11 @@ const AllLectures = () => {
             <div style={modalStyle}>
               <button onClick={() => setShowModal(false)} style={closeBtn}>×</button>
               <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>Create New Lecture</h3>
-               <label>Topic:</label>
+              <label>Topic:</label>
               <input type="text" value={newLecture.topic}
                 onChange={e => setNewLecture({ ...newLecture, topic: e.target.value })} style={MfilterInputStyle} />
               <label>Date:</label>
-              <input  type="date" value={newLecture.date}
+              <input type="date" value={newLecture.date}
                 onChange={e => setNewLecture({ ...newLecture, date: e.target.value })} style={MfilterInputStyle} />
               <label>Type:</label>
               <select value={newLecture.type}
@@ -151,7 +173,6 @@ const AllLectures = () => {
                 <option value="Lec">Lec</option>
                 <option value="Lab">Lab</option>
               </select>
-             
               <div style={{ marginTop: '20px', textAlign: 'center' }}>
                 <button style={btnStyle} onClick={handleCreateLecture}>Create</button>
               </div>
@@ -164,6 +185,9 @@ const AllLectures = () => {
 };
 
 export default AllLectures;
+
+// ---------------- Styles ----------------
+
 const scrollContainerStyle = {
   maxHeight: '400px',
   overflowY: 'auto',
@@ -204,7 +228,6 @@ const createBtnStyle = {
   ...btnStyle,
   backgroundColor: '#28a745',
   marginBottom: '20px',
-  
 };
 
 const backBtnStyle = {
@@ -216,7 +239,7 @@ const backBtnStyle = {
   borderRadius: "20px",
   margin: "30px auto",
   display: 'block',
-  cursor:"pointer"
+  cursor: "pointer"
 };
 
 const filterWrapperStyle = {
@@ -234,12 +257,13 @@ const filterInputStyle = {
   fontSize: '14px',
   width: '80%'
 };
+
 const MfilterInputStyle = {
   padding: '8px 12px',
-  margin:"6px",
+  margin: "6px",
   border: '1px solid #ccc',
   borderRadius: '6px',
-  minWidth: '130px',    
+  minWidth: '130px',
   fontSize: '14px',
   width: '95%'
 };

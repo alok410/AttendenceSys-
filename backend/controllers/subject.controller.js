@@ -152,7 +152,8 @@ exports.getSubjectAndClassDetails = (req, res) => {
   const query = `
     SELECT 
       s.name AS subject_name,
-      c.name AS class_name
+      c.name AS class_name,
+      c.id
     FROM subjects s
     JOIN classes c ON s.class_id = c.id
     WHERE s.id = ?
