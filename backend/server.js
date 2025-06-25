@@ -13,6 +13,8 @@ const subjectssRoutes = require("./routes/subject.route")
 const lecturessRoutes  =require ("./routes/lecture.route")
 const programsRoutes  =require ("./routes/programs.route")
 const semRoutes  =require ("./routes/sem.route")
+const atdRoutes  =require ("./routes/attendance.route")
+
 
 
 
@@ -41,6 +43,7 @@ app.use('/subjects',subjectssRoutes)
 app.use('/lectures',lecturessRoutes)
 app.use('/programs',programsRoutes)
 app.use('/sems',semRoutes)
+app.use('/attendance',atdRoutes)
 
 
 

@@ -6,7 +6,9 @@ const getAllClasses = (req, res) => {
     SELECT 
       c.id, c.name, c.batch,
       d.name AS department_name,
+      d.id As department_id,
       s.name AS semester_name,
+      c.semester_id,
       p.name AS program_name
     FROM classes c
     LEFT JOIN departments d ON c.department_id = d.id

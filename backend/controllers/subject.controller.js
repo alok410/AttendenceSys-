@@ -1,4 +1,5 @@
 const connection = require('../config/db');
+const db = require('../config/db'); 
 
 // -------------------------
 // Get Subjects by Class ID
@@ -145,3 +146,22 @@ exports.createSubject = (req, res) => {
   });
 };
 
+exports.getSubjectAndClassDetails = (req, res) => {
+  const { subjectId } = req.params;
+
+  const query = `
+    SELECT 
+      s.name AS subject_name,
+      c.name AS class_name
+    FROM subjects s
+    JOIN classes c ON s.class_id = c.id
+    WHERE s.id = ?
+  `;
+
+  db.query(query, [subjectId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: 'Subject not found' });
+
+    res.status(200).json(results[0]);
+  });
+};

@@ -143,9 +143,31 @@ const updateStudent = (req, res) => {
   });
 };
 
+
+const getStudentsBySubject = (req, res) => {
+  const { subjectId } = req.params;
+
+  const getClassQuery = 'SELECT class_id FROM subjects WHERE id = ?';
+  db.query(getClassQuery, [subjectId], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (result.length === 0) return res.status(404).json({ message: 'Subject not found' });
+
+    const classId = result[0].class_id;
+
+    const getStudentsQuery = 'SELECT * FROM students WHERE class_id = ?';
+    db.query(getStudentsQuery, [classId], (err, students) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      res.status(200).json({ class_id: classId, students });
+    });
+  });
+};
+
+
 module.exports = {
   getAllStudents,
   createStudent,
   deleteStudent,
-  updateStudent
+  updateStudent,
+  getStudentsBySubject
 };

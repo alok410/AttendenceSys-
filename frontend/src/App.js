@@ -49,7 +49,8 @@ function App() {
         <Route path="/hod/create-subject" element={<ProtectedRoute allowedRoles={['hod']}><CreateSubjects /></ProtectedRoute>} />
         <Route path="/faculty/my-subjects" element={<ProtectedRoute allowedRoles={['faculty']}><MySubjects /></ProtectedRoute>} />
         <Route path="/faculty/my-subjects/:id" element={<ProtectedRoute allowedRoles={['faculty']}><AllLectures /></ProtectedRoute>} />
-        <Route path="/faculty/my-subjects/:id/atd" element={<ProtectedRoute allowedRoles={['faculty']}><Attendance /></ProtectedRoute>} />
+        <Route path="/faculty/my-subjects/:subjectId/:lectureId" element={<ProtectedRoute allowedRoles={['faculty']}><Attendance /></ProtectedRoute>} />
+        
 
       
       </Routes>

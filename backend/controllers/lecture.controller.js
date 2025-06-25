@@ -9,7 +9,8 @@ const getAllLecture = (req,res) =>{
   S.name AS subject_name,
   L.id AS lecture_id,
   L.duration,
-  C.name AS class_name
+  C.name AS class_name,
+  S.class_id
 FROM lectures AS L
 JOIN subjects AS S ON L.subject_id = S.id
 JOIN classes AS C ON S.class_id = C.id
@@ -117,7 +118,7 @@ const getLecturesBySubject = (req, res) => {
     JOIN subjects s ON l.subject_id = s.id
     JOIN faculty f ON l.faculty_id = f.id
     WHERE l.subject_id = ?
-    ORDER BY l.date DESC
+    ORDER BY l.id DESC
   `;
 
   db.query(query, [subjectId], (err, results) => {

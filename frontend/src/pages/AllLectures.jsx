@@ -82,6 +82,8 @@ const AllLectures = () => {
         </div>
 
         <button style={createBtnStyle} onClick={() => setShowModal(true)}>+ Create Lecture</button>
+        <button style={createBtnStyle} onClick={() => setShowModal(true)}>Export Report</button>
+
 
         {filteredLectures.length === 0 ? (
           <p>No lectures found.</p>
@@ -107,8 +109,22 @@ const AllLectures = () => {
                     <td style={tdStyle}>{lec.topic || '-'}</td>
                     <td style={tdStyle}>{lec.faculty_name}</td>
                     <td style={tdStyle}>
-                      <button onClick={() => navigate(`/faculty/my-subjects/${subjectId}/atd`)} style={btnStyle}>Mark</button>
-                    </td>
+  {lec.faculty_id === facultyId ? (
+    <button
+      onClick={() => navigate(`/faculty/my-subjects/${subjectId}/${lec.id}`)}
+      style={btnStyle}
+    >
+      Mark
+    </button>
+  ) : (
+    <button
+      disabled
+      style={{ ...btnStyle, backgroundColor: 'gray', cursor: 'not-allowed' }}
+    >
+      Not Allowed
+    </button>
+  )}
+</td>
                   </tr>
                 ))}
               </tbody>
@@ -187,7 +203,8 @@ const btnStyle = {
 const createBtnStyle = {
   ...btnStyle,
   backgroundColor: '#28a745',
-  marginBottom: '20px'
+  marginBottom: '20px',
+  
 };
 
 const backBtnStyle = {

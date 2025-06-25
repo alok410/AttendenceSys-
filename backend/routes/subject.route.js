@@ -5,7 +5,8 @@ const {
   assignFacultyToSubject,
   getSubjectsByDepartmentFull, // ✅ newly added
   getSubjectsByFaculty,
-  createSubject
+  createSubject,
+  getSubjectAndClassDetails
 } = require('../controllers/subject.controller');
 
 const { getFacultyByDepartment } = require('../controllers/faculty.controller');
@@ -20,5 +21,7 @@ router.post('/createSubject', createSubject);
 router.get('/byDeptFull/:deptId', getSubjectsByDepartmentFull);
 
 router.get('/byFaculty/:facultyId', getSubjectsByFaculty);
+router.get('/details/:subjectId', getSubjectAndClassDetails);
+
 
 module.exports = router;
